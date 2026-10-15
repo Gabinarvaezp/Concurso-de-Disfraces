@@ -237,7 +237,6 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding-block:28px}
     <div id="grpHelp" class="notice sample" hidden>
       <b>Hay personas que marcaron "Grupal".</b> El Forms no pregunta el nombre del grupo, así que escríbeselo a cada integrante (el mismo nombre para todos). La app los junta en un solo turno.
     </div>
-    <div class="row" style="margin-top:12px"><button class="btn yellow big" type="button" data-xlsx="1">Descargar Excel organizado</button><span class="pmeta">Programación, participantes y planilla del jurado en un solo archivo.</span></div>
     <div class="toolbar" style="margin-top:12px">
       <input type="search" id="q" placeholder="Buscar por nombre, BMS o celular" aria-label="Buscar">
       <button class="chipbtn" type="button" data-filter="todos" aria-pressed="true">Todos</button>
@@ -272,12 +271,11 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding-block:28px}
   <!-- EXTRA -->
   <section class="panel" id="p-ajustes" role="tabpanel" aria-labelledby="t-ajustes" hidden>
     <h2>Listas y ajustes </h2>
-    <p class="hint">Copia las listas y pégalas en Excel, en un correo o en WhatsApp.</p>
+    <p class="hint">Descarga los archivos para el equipo y el jurado, o copia el orden para el host.</p>
     <div class="row">
       <button class="btn primary" type="button" data-xlsx="1">Descargar Excel organizado</button>
-      <button class="btn yellow" id="btnOps" type="button">Copiar listado para Operaciones</button>
+      <button class="btn primary" type="button" data-jury="1">Descargar lista de calificación del jurado</button>
       <button class="btn yellow" id="btnHost" type="button">Copiar orden para el host</button>
-      <button class="btn yellow" id="btnGaming" type="button">Copiar orden para el Gaming</button>
     </div>
     <h2 style="font-size:19px;margin-top:24px">Horario</h2>
     <p class="hint">Ya viene con el plan. Cámbialo solo si cambia el horario.</p>
@@ -599,7 +597,6 @@ function exportXlsx(){
   const prog=units.map(u=>[u.n,u.arrive,fmt(u.arriveMin+5),u.up,u.down,callName(u),u.members.map(m=>realName(m.name)).join(', '),u.grupal?'Grupal':'Individual',u.members.length,
     u.members.map(m=>m.phone).filter(Boolean).join(' / '),u.members.map(m=>m.email).filter(Boolean).join(' / '),u.members.every(m=>m.wa||m.mail)?'Sí':'No','','']);
   const people=units.flatMap(u=>u.members.map(m=>[u.n,u.up,realName(m.name),u.grupal?(u.group||''):(m.stage||''),m.bms,u.grupal?'Grupal':'Individual',u.group||'',m.phone,m.email,m.wa?'Sí':'No',m.mail?'Sí':'No',m.rem?'Sí':'No']));
-  const jur=units.map((u,i)=>[u.n,unitName(u),'','','',{f:`IF(COUNT(C${5+i}:E${5+i})=0,"",SUM(C${5+i}:E${5+i}))`},'']);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,sheet('Concurso de Disfraces · Programación de la tarima',sub,
     ['Turno','Hora de llegada','Tolerancia hasta','Sube a la tarima','Baja de la tarima','Nombre en tarima','Nombre(s) completo(s)','Modalidad','N.º personas','Celular','Correo','Confirmado','¿Llegó?','Observaciones'],
@@ -607,10 +604,92 @@ function exportXlsx(){
   XLSX.utils.book_append_sheet(wb,sheet('Concurso de Disfraces · Participantes',sub,
     ['Turno','Sube a la tarima','Nombre completo','Nombre en tarima','BMS ID','Modalidad','Grupo','Teléfono','Correo','WhatsApp enviado','Correo enviado','Recordatorio enviado'],
     people,[7,13,30,22,12,12,20,14,34,11,11,12],[0,1,4,5,9,10,11],[0,2,3]),'Participantes');
-  XLSX.utils.book_append_sheet(wb,sheet('Concurso de Disfraces · Planilla del jurado',`Nota de 1 a 10 por criterio · máximo 30 · Jurado: ____________________`,
-    ['Turno','Participante / grupo','Creatividad y originalidad','Elaboración y detalle','Puesta en escena','Total /30','Puesto'],
-    jur,[7,32,16,16,16,11,10],[0,2,3,4,5,6],[0,1,5]),'Jurado');
-  try{XLSX.writeFile(wb,'Programacion_Desfile_Disfraces_2026.xlsx');toast('Excel descargado ')}catch(e){toast('No se pudo descargar aquí. Usa la versión de GitHub.')}
+  try{XLSX.writeFile(wb,'Programacion_Desfile_Disfraces_2026.xlsx');toast('Excel descargado')}catch(e){toast('No se pudo descargar aquí. Usa la versión de GitHub.')}
+}
+
+/* ---------- Jury scoring workbook (ExcelJS, formulas + validation) ---------- */
+function loadExcelJS(){return new Promise((res,rej)=>{if(window.ExcelJS)return res();const sc=document.createElement('script');
+  sc.src='https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';sc.onload=()=>res();sc.onerror=()=>rej();document.head.appendChild(sc)})}
+async function exportJury(){
+  try{await loadExcelJS()}catch(e){return toast('No se pudo cargar el generador de Excel. Revisa el internet.')}
+  const all=compute().filter(u=>!u.over&&!u.retired),c=cfg();
+  const rows=all.length?all.map(u=>({n:u.n,who:callName(u),names:u.members.map(m=>realName(m.name)).join(', ')})):Array.from({length:c.max},(_,i)=>({n:i+1,who:'',names:''}));
+  const N=rows.length,F=6,L=F+N-1,J=3;
+  const NIGHT='FF3A2E3F',PINK='FFF8C8DC',PINKL='FFFDEEF4',YEL='FFFFE27A',YELL='FFFFF8DC',LINE='FFE3C6D3',WHITE='FFFFFFFF';
+  const thin={style:'thin',color:{argb:LINE}},box={top:thin,bottom:thin,left:thin,right:thin};
+  const font=(o={})=>({name:'Arial',size:o.size||11,bold:!!o.bold,italic:!!o.italic,color:{argb:o.color||NIGHT}});
+  const fill=a=>({type:'pattern',pattern:'solid',fgColor:{argb:a}});
+  const wb=new ExcelJS.Workbook();wb.creator='Emotions & Experiences';
+  function title(ws,cols,t1,t2){ws.mergeCells(1,1,1,cols);ws.mergeCells(2,1,2,cols);
+    const a=ws.getCell(1,1);a.value=t1;a.font=font({size:16,bold:true,color:WHITE});a.fill=fill(NIGHT);a.alignment={vertical:'middle',indent:1};ws.getRow(1).height=32;
+    const b=ws.getCell(2,1);b.value=t2;b.font=font({size:10});b.fill=fill(YEL);b.alignment={vertical:'middle',indent:1};ws.getRow(2).height=20}
+  function header(ws,r,labels){labels.forEach((h,i)=>{const x=ws.getCell(r,i+1);x.value=h;x.font=font({bold:true,color:WHITE});x.fill=fill(NIGHT);x.alignment={horizontal:'center',vertical:'middle',wrapText:true};x.border=box});ws.getRow(r).height=36}
+  function body(ws,r,i,vals,center){vals.forEach((v,k)=>{const x=ws.getCell(r,k+1);x.value=v;x.font=font();x.fill=fill(i%2?PINKL:WHITE);x.border=box;x.alignment={vertical:'middle',wrapText:true,horizontal:center.includes(k)?'center':'left'}});ws.getRow(r).height=22}
+  const crit=['Creatividad y originalidad','Elaboración y detalle','Puesta en escena'];
+
+  // Ganadores (first tab)
+  const G=wb.addWorksheet('Ganadores',{views:[{showGridLines:false}],pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}});
+  // Resultados
+  const R=wb.addWorksheet('Resultados',{views:[{state:'frozen',ySplit:5,showGridLines:false}],pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}});
+  // Jurados
+  const JS=[];for(let j=1;j<=J;j++)JS.push(wb.addWorksheet('Jurado '+j,{views:[{state:'frozen',ySplit:5,showGridLines:false}],pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}}));
+
+  const conv=(c,r)=>{const x=`TRIM(${c}${r})`,a=`IFERROR(VALUE(SUBSTITUTE(${x},",",".")),0)`,b=`IFERROR(VALUE(SUBSTITUTE(${x},".",",")),0)`;
+    return `IF(${c}${r}="","",IF(ISNUMBER(${c}${r}),${c}${r},IF(AND(${a}>=1,${a}<=5),${a},IF(AND(${b}>=1,${b}<=5),${b},""))))`};
+  JS.forEach((ws,j)=>{
+    ws.columns=[{width:8},{width:28},{width:32},{width:16},{width:16},{width:16},{width:12},{width:30},{width:4},{width:6,hidden:true},{width:6,hidden:true},{width:6,hidden:true},{width:6,hidden:true}];
+    title(ws,8,`Concurso de Disfraces · Planilla del Jurado ${j+1}`,'Califica cada criterio de 1 a 5 (puedes usar decimales, por ejemplo 3,5)   ·   1 = Básico   ·   3 = Bueno   ·   5 = Sobresaliente   ·   Máximo 15');
+    ws.getCell(3,1).value='Nombre del jurado:';ws.getCell(3,1).font=font({bold:true});ws.mergeCells(3,1,3,2);
+    ws.mergeCells(3,3,3,5);const nm=ws.getCell(3,3);nm.fill=fill(YELL);nm.border={bottom:{style:'medium',color:{argb:NIGHT}}};ws.getRow(3).height=24;
+    header(ws,5,['Turno','Participante / grupo','Nombre(s)',crit[0]+' (1 a 5)',crit[1]+' (1 a 5)',crit[2]+' (1 a 5)','Total (/15)','Observaciones']);
+    rows.forEach((r,i)=>{const rr=F+i;
+      body(ws,rr,i,[r.n,r.who,r.names,null,null,null,{formula:`IF(M${rr}=0,"",SUM(J${rr}:L${rr}))`},''],[0,3,4,5,6]);
+      ['D','E','F'].forEach((col,k)=>{ws.getCell(rr,10+k).value={formula:conv(col,rr)}});
+      ws.getCell(rr,13).value={formula:`COUNT(J${rr}:L${rr})`};
+      for(let k=4;k<=6;k++){const x=ws.getCell(rr,k);x.fill=fill(YELL);x.font=font({bold:true,size:12});
+        x.dataValidation={type:'decimal',operator:'between',allowBlank:true,formulae:[1,5],showErrorMessage:true,errorStyle:'stop',errorTitle:'Calificación no válida',error:'Escribe un número del 1 al 5. Puedes usar decimales, por ejemplo 3,5.',showInputMessage:true,promptTitle:crit[k-4],prompt:'De 1 a 5 · 1 = Básico · 3 = Bueno · 5 = Sobresaliente'}}
+      ws.getCell(rr,7).font=font({bold:true,size:12});});
+    ws.autoFilter={from:{row:5,column:1},to:{row:L,column:8}};
+  });
+
+  // Resultados
+  R.columns=[{width:8},{width:28},{width:32},{width:13},{width:13},{width:13},{width:13},{width:10},{width:28},{width:6,hidden:true},{width:6,hidden:true}];
+  title(R,9,'Concurso de Disfraces · Resultados del jurado','Se llena solo con las planillas de los 3 jurados   ·   Máximo 45 puntos   ·   El puesto se calcula solo cuando el participante tiene todas sus notas');
+  header(R,5,['Turno','Participante / grupo','Nombre(s)','Jurado 1','Jurado 2','Jurado 3','Total (/45)','Puesto','Observación']);
+  rows.forEach((r,i)=>{const rr=F+i;const jg=k=>({formula:`IF('Jurado ${k}'!G${rr}="","",'Jurado ${k}'!G${rr})`});
+    body(R,rr,i,[r.n,r.who,r.names,jg(1),jg(2),jg(3),
+      {formula:`IF(COUNT(D${rr}:F${rr})=0,"",SUM(D${rr}:F${rr}))`},
+      {formula:`IF(K${rr}<9,"",1+COUNTIFS($G$${F}:$G$${L},">"&G${rr},$J$${F}:$J$${L},">=0"))`},
+      {formula:`IF(G${rr}="","",IF(K${rr}<9,"Faltan calificaciones",IF(COUNTIFS($G$${F}:$G$${L},G${rr},$J$${F}:$J$${L},">=0")>1,"Empate: decide el jurado","")))`}],[0,3,4,5,6,7]);
+    R.getCell(rr,10).value={formula:`IF(K${rr}<9,-1,G${rr}+(${N+1}-A${rr})/10000)`};
+    R.getCell(rr,11).value={formula:`'Jurado 1'!M${rr}+'Jurado 2'!M${rr}+'Jurado 3'!M${rr}`};
+    R.getCell(rr,7).font=font({bold:true,size:12});R.getCell(rr,8).font=font({bold:true,size:12});});
+  const medal=[['FFFFE27A',1],['FFE6E6EE',2],['FFF7D0B5',3]];
+  R.addConditionalFormatting({ref:`A${F}:I${L}`,rules:medal.map(([col,p],k)=>({type:'expression',priority:k+1,formulae:[`$H${F}=${p}`],style:{fill:{type:'pattern',pattern:'solid',bgColor:{argb:col}},font:{bold:true}}}))});
+
+  // Ganadores
+  G.columns=[{width:14},{width:32},{width:38},{width:14},{width:16}];
+  title(G,5,'Concurso de Disfraces · Ganadores','Se calcula solo con los totales de la hoja Resultados   ·   Viernes 30 de octubre   ·   '+c.place);
+  header(G,5,['Puesto','Participante / grupo','Nombre(s)','Puntaje (/45)','Premio']);
+  const prem=['$300.000','$200.000','$100.000'],lab=['1° puesto','2° puesto','3° puesto'],gcol=['FFFFE27A','FFE6E6EE','FFF7D0B5'];
+  const rng=`Resultados!$J$${F}:$J$${L}`;
+  for(let k=1;k<=3;k++){const rr=5+k;const pos=`MATCH(LARGE(${rng},${k}),${rng},0)`,ok=`LARGE(${rng},${k})>=0`;
+    const vals=[lab[k-1],{formula:`IFERROR(IF(${ok},INDEX(Resultados!$B$${F}:$B$${L},${pos}),""),"")`},{formula:`IFERROR(IF(${ok},INDEX(Resultados!$C$${F}:$C$${L},${pos}),""),"")`},
+      {formula:`IFERROR(IF(${ok},INDEX(Resultados!$G$${F}:$G$${L},${pos}),""),"")`},prem[k-1]];
+    vals.forEach((v,i)=>{const x=G.getCell(rr,i+1);x.value=v;x.fill=fill(gcol[k-1]);x.border=box;x.font=font({bold:i!==2,size:i===1?14:12});x.alignment={vertical:'middle',horizontal:[0,3,4].includes(i)?'center':'left',wrapText:true}});
+    G.getRow(rr).height=34;}
+  G.mergeCells(10,1,10,5);const nt=G.getCell(10,1);
+  nt.value={formula:`TRIM(IF(COUNTIF(Resultados!$I$${F}:$I$${L},"Faltan*")>0,"Aún faltan calificaciones de algún jurado (los ganadores solo cuentan participantes con las 3 notas). ","")&IF(COUNTIF(Resultados!$I$${F}:$I$${L},"Empate*")>0,"Hay empates en los puntajes: el jurado define el puesto por deliberación (T&C).",""))`};
+  nt.font=font({bold:true,color:'FFB3261E'});nt.alignment={wrapText:true,vertical:'top'};G.getRow(10).height=34;
+  G.getCell(12,1).value='Firmas del jurado';G.getCell(12,1).font=font({bold:true});
+  ['Jurado 1','Jurado 2','Jurado 3'].forEach((t,i)=>{const col=[1,3,5][i];const x=G.getCell(15,col);x.value=t;x.font=font({size:10});x.alignment={horizontal:'center'};x.border={top:{style:'thin',color:{argb:NIGHT}}}});
+  G.getRow(14).height=30;
+
+  wb.calcProperties.fullCalcOnLoad=true;
+  const buf=await wb.xlsx.writeBuffer();
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Calificacion_Jurado_Desfile_Disfraces_2026.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Lista de calificación descargada')}
+  catch(e){toast('No se pudo descargar aquí. Usa la versión de GitHub.')}
 }
 
 /* ---------- render all ---------- */
@@ -671,12 +750,8 @@ $('p-vivo').addEventListener('click',e=>{
   if(d.undo){const k=(L.order||[]).pop();if(k){delete L.status[k];L.startedAt=null;L.startedKey=null}}
   save();renderLive(compute());
 });
-$('btnOps').onclick=()=>{const units=compute().filter(u=>!u.over&&!u.retired);copy(['Turno\tNombre\tBMS ID\tModalidad\tGrupo\tCelular\tLlega\tSube a la tarima\tBaja',
-  ...units.flatMap(u=>u.members.map(p=>[u.n,p.name,p.bms,p.mode,u.group||'',p.phone,u.arrive,u.up,u.down].join('\t')))].join('\n'),'Listado para Operaciones copiado')};
 $('btnHost').onclick=()=>{const units=compute().filter(u=>!u.over&&!u.retired);copy(['Turno\tSube a la tarima\tLlamar como\tNombre(s) completo(s)',
   ...units.map(u=>[u.n,u.up,callName(u),u.members.map(m=>realName(m.name)).join(', ')].join('\t'))].join('\n'),'Orden para el host copiado')};
-$('btnGaming').onclick=()=>{const units=compute().filter(u=>!u.over&&!u.retired);copy(['Turno\tSube a la tarima\tBaja\tParticipante / grupo',
-  ...units.map(u=>[u.n,u.up,u.down,unitName(u)].join('\t'))].join('\n'),'Orden para el Gaming copiado')};
 function resetAll(btn){const lbl=btn.dataset.lbl||(btn.dataset.lbl=btn.textContent);
   if(!btn.dataset.c){btn.dataset.c=1;btn.textContent='¿Seguro? Se borra todo · toca otra vez';setTimeout(()=>{btn.textContent=lbl;delete btn.dataset.c},3500);return}
   S.rows=[];S.sample=false;S.live={status:{},arrived:{},current:0,startedAt:null};$('paste').value='';$('info').hidden=true;$('err').hidden=true;
@@ -684,7 +759,7 @@ function resetAll(btn){const lbl=btn.dataset.lbl||(btn.dataset.lbl=btn.textConte
 $('btnReset1').onclick=function(){resetAll(this)};
 $('btnClear').onclick=function(){resetAll(this)};
 
-document.addEventListener('click',e=>{if(e.target.closest('[data-xlsx]'))exportXlsx()});
+document.addEventListener('click',e=>{if(e.target.closest('[data-xlsx]'))exportXlsx();if(e.target.closest('[data-jury]'))exportJury()});
 /* ---------- animated night background ---------- */
 (function(){const cv=$('bg'),ctx=cv.getContext('2d');if(!ctx)return;
   const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
