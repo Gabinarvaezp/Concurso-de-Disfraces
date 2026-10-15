@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Desfile de Disfraces E&amp;E</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: a night-sky single-theme app — haunted header with floating ghost, 4 big step tabs, one panel at a time; the "Desfile en vivo" tab is a live stage console */
+:root{
+  color-scheme:dark;
+  --night:#1A1222; --night-2:#241930; --card:#2E2140; --card-2:#382950; --line:#4A3866;
+  --pink:#F7B8D0; --pink-deep:#E77FA8; --yellow:#FFD966; --yellow-deep:#F5B83D; --pumpkin:#FF9F5A;
+  --text:#FBF1F7; --muted:#C2AFCB; --ok:#8FE3B5; --ok-bg:#1F3A2E; --bad:#FF9B9B; --bad-bg:#432330; --wa:#25D366;
+  --display:"Fredoka","Nunito",system-ui,sans-serif; --body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--night);color:var(--text);font-family:var(--body);font-size:15px;line-height:1.5;min-height:100vh;
+  background-image:radial-gradient(circle at 85% -10%,rgba(255,217,102,.18),transparent 40%),radial-gradient(circle at 0% 30%,rgba(247,184,208,.08),transparent 35%);background-attachment:fixed}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--yellow)}
+button,input,select,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+/* header */
+header{position:relative;overflow:hidden;padding-block:28px 22px;border-bottom:1px solid var(--line)}
+.moon{position:absolute;right:max(16px,6vw);top:18px;width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFF4C2,var(--yellow) 60%,var(--yellow-deep));box-shadow:0 0 60px rgba(255,217,102,.45)}
+.bat{position:absolute;width:34px;fill:var(--night-2);opacity:.9}
+.bat.b1{right:calc(max(16px,6vw) + 70px);top:30px;animation:flap 3.5s ease-in-out infinite}
+.bat.b2{right:calc(max(16px,6vw) + 10px);top:96px;width:24px;animation:flap 4.2s ease-in-out infinite reverse}
+@keyframes flap{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(4deg)}}
+.ghost{position:absolute;right:calc(max(16px,6vw) + 120px);bottom:6px;width:58px;animation:float 5s ease-in-out infinite;opacity:.95}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.eyebrow{font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pink)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,5vw,46px);line-height:1.02;margin:6px 0 4px;max-width:14ch;text-wrap:balance}
+h1 span{color:var(--yellow)}
+.lead{color:var(--muted);margin:0 0 16px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 16px;min-width:116px}
+.stat b{display:block;font-family:var(--display);font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.stat.hl b{color:var(--yellow)}
+
+/* tabs */
+nav.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:20px 0}
+.tab{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--night-2);border:1px solid var(--line);color:var(--muted);border-radius:16px;padding:12px 14px;cursor:pointer}
+.tab .k{font-family:var(--display);font-size:13px;color:var(--pink)}
+.tab .l{font-weight:800;color:var(--text);font-size:15px}
+.tab[aria-selected="true"]{background:var(--card-2);border-color:var(--yellow);box-shadow:0 0 0 1px var(--yellow) inset}
+.tab[aria-selected="true"] .k{color:var(--yellow)}
+@media (max-width:640px){nav.tabs{grid-template-columns:repeat(2,1fr)}}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px}
+h2{font-family:var(--display);font-weight:600;font-size:24px;margin:0 0 6px}
+.hint{color:var(--muted);margin:0 0 14px}
+.steps{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.steps li{background:var(--night-2);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start}
+.steps .n{flex:none;width:28px;height:28px;border-radius:50%;background:var(--yellow);color:#2A1B10;display:grid;place-items:center;font-weight:800}
+textarea{width:100%;min-height:130px;background:var(--night);color:var(--text);border:2px dashed var(--line);border-radius:14px;padding:12px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;resize:vertical}
+textarea:focus{border-color:var(--pink)}
+input,select{background:var(--night);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:9px 12px;min-width:0}
+label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:13px;color:var(--muted)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:12px;padding:10px 16px;font-weight:800;font-size:14px;border:1px solid var(--line);background:var(--night-2);color:var(--text);cursor:pointer;text-decoration:none;white-space:nowrap;transition:transform .1s}
+.btn:hover{border-color:var(--pink)}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--pink);color:#2B1220;border-color:var(--pink)}
+.btn.yellow{background:var(--yellow);color:#2A1B10;border-color:var(--yellow)}
+.btn.wa{background:var(--wa);color:#08311A;border-color:var(--wa)}
+.btn.big{font-size:17px;padding:14px 22px;border-radius:16px}
+.btn.sm{font-size:13px;padding:7px 11px;border-radius:10px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.notice{border-radius:14px;padding:12px 14px;margin-top:12px;font-size:14px}
+.notice.sample{background:rgba(255,217,102,.1);border:1px dashed var(--yellow);color:var(--text)}
+.notice.err{background:var(--bad-bg);color:var(--bad)}
+.notice.ok{background:var(--ok-bg);color:var(--ok)}
+[hidden]{display:none!important}
+
+/* turn cards */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar input[type=search]{flex:1 1 200px}
+.chipbtn{border-radius:999px;padding:6px 12px;font-weight:700;font-size:13px;background:var(--night-2);border:1px solid var(--line);color:var(--muted);cursor:pointer}
+.chipbtn[aria-pressed="true"]{background:var(--pink);color:#2B1220;border-color:var(--pink)}
+.list{display:flex;flex-direction:column;gap:12px}
+.turn{display:grid;grid-template-columns:auto 1fr;gap:14px;background:var(--night-2);border:1px solid var(--line);border-radius:18px;padding:14px 16px}
+.turn.over{border-color:var(--bad);background:var(--bad-bg)}
+.tn{width:68px;height:68px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#FFC48A,var(--pumpkin));color:#3A1A06;display:grid;place-items:center;text-align:center;font-family:var(--display);font-weight:700;font-size:26px;line-height:1;position:relative}
+.tn::before{content:"";position:absolute;top:-7px;left:50%;width:8px;height:12px;background:#5B8C3A;border-radius:3px;transform:translateX(-50%) rotate(8deg)}
+.tn small{display:block;font-size:10px;font-family:var(--body);font-weight:800;letter-spacing:.06em}
+.times{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.tchip{background:var(--card);border-radius:10px;padding:4px 10px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tchip b{color:var(--text)}
+.tchip.up b{color:var(--yellow)}
+.badge{display:inline-block;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;background:var(--card-2);color:var(--pink)}
+.badge.grp{background:rgba(255,217,102,.14);color:var(--yellow)}
+.badge.warn{background:rgba(255,159,90,.16);color:var(--pumpkin)}
+.badge.bad{background:var(--bad-bg);color:var(--bad)}
+.badge.ok{background:var(--ok-bg);color:var(--ok)}
+.person{border-top:1px dashed var(--line);padding-top:10px;margin-top:10px;min-width:0}
+.person:first-of-type{border-top:0;padding-top:0}
+.pname{font-weight:800;font-size:16px}
+.pmeta{font-size:13px;color:var(--muted);word-break:break-word}
+.acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.grp-in{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--muted);font-weight:700;flex-wrap:wrap}
+.grp-in input{padding:6px 10px;font-size:13px;width:200px}
+details.msg{margin-top:8px}
+details.msg summary{cursor:pointer;color:var(--pink);font-weight:700;font-size:13px}
+details.msg pre{white-space:pre-wrap;font-family:var(--body);font-size:13px;background:var(--night);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0 0}
+.empty{text-align:center;color:var(--muted);padding:36px 12px}
+
+/* live stage */
+.live{display:grid;gap:16px;grid-template-columns:1.3fr 1fr}
+@media (max-width:820px){.live{grid-template-columns:1fr}}
+.stage{align-self:start;background:linear-gradient(160deg,var(--card-2),var(--night-2));border:1px solid var(--yellow);border-radius:22px;padding:20px;position:relative;overflow:hidden}
+.stage .label{font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--yellow)}
+.stage .who{font-family:var(--display);font-size:clamp(24px,4vw,34px);font-weight:700;line-height:1.1;margin:6px 0}
+.stage .sub{color:var(--muted)}
+.ring{width:170px;height:170px;margin:16px auto 8px;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .bg{stroke:var(--line);fill:none;stroke-width:12}
+.ring .fg{stroke:var(--pink);fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset .5s linear,stroke .3s}
+.ring .num{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:40px;font-weight:700;font-variant-numeric:tabular-nums}
+.ring.warn .fg{stroke:var(--yellow)}
+.ring.done .fg{stroke:var(--bad)}
+.ring.done .num{color:var(--bad)}
+.delay{font-weight:800;text-align:center;margin-top:4px}
+.delay.ok{color:var(--ok)} .delay.late{color:var(--pumpkin)}
+.queue{display:flex;flex-direction:column;gap:10px}
+.qitem{background:var(--night-2);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.qitem.arrived{border-color:var(--ok)}
+.qhead{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.qhead b{font-family:var(--display);font-size:18px}
+.progress{height:12px;border-radius:999px;background:var(--night-2);overflow:hidden;border:1px solid var(--line);margin:8px 0 4px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--yellow));width:0;transition:width .4s}
+.clock{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(10px);background:var(--yellow);color:#2A1B10;font-weight:800;padding:10px 18px;border-radius:14px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:10;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.slots{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));margin-top:12px}
+.slot{border:2px dashed var(--line);border-radius:14px;padding:10px 12px;color:var(--muted);font-size:13px}
+.slot b{display:block;font-family:var(--display);font-size:17px;color:var(--text)}
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:20px;flex-wrap:wrap}
+.sechead h3{font-family:var(--display);font-weight:600;font-size:19px;margin:0}
+.alert{background:rgba(255,159,90,.12);border:1px solid var(--pumpkin);border-radius:16px;padding:12px 14px;margin-bottom:12px}
+.alert h4{margin:0 0 6px;font-family:var(--display);font-size:16px;color:var(--pumpkin)}
+.qitem.late{border-color:var(--pumpkin)}
+.qitem.lost{border-color:var(--bad)}
+.samplebar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border:2px dashed var(--pink);border-radius:20px;padding:30px 16px;background:rgba(247,184,208,.06);cursor:pointer;transition:background .15s,border-color .15s}
+.drop:hover,.drop.over{background:rgba(255,217,102,.1);border-color:var(--yellow)}
+.dicon{color:var(--pink)}
+.dtitle{font-family:var(--display);font-size:22px;font-weight:600;color:var(--text)}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+header,main,footer{position:relative;z-index:1}
+footer{color:var(--muted);font-size:12px;text-align:center;padding-block:28px}
+@media (prefers-reduced-motion:reduce){.bat,.ghost{animation:none}.ring .fg,.progress i,.toast,.btn{transition:none}}
+@media (max-width:560px){.moon{width:48px;height:48px;top:14px}.ghost{display:none}.bat{display:none}header .eyebrow{padding-right:60px}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+<header>
+  <div class="moon" aria-hidden="true"></div>
+  <svg class="bat b1" viewBox="0 0 64 32" aria-hidden="true"><path d="M32 10c2-4 4-6 4-6s1 4 0 6c6-6 14-8 28-6-6 2-10 6-10 12-4-4-8-4-12 0-2-4-6-4-10 2-4-6-8-6-10-2-4-4-8-4-12 0 0-6-4-10-10-12 14-2 22 0 28 6-1-2 0-6 0-6s2 2 4 6z"/></svg>
+  <svg class="bat b2" viewBox="0 0 64 32" aria-hidden="true"><path d="M32 10c2-4 4-6 4-6s1 4 0 6c6-6 14-8 28-6-6 2-10 6-10 12-4-4-8-4-12 0-2-4-6-4-10 2-4-6-8-6-10-2-4-4-8-4-12 0 0-6-4-10-10-12 14-2 22 0 28 6-1-2 0-6 0-6s2 2 4 6z"/></svg>
+  <svg class="ghost" viewBox="0 0 60 72" aria-hidden="true"><path d="M30 2C15 2 6 14 6 28v38l8-6 8 6 8-6 8 6 8-6 8 6V28C54 14 45 2 30 2z" fill="#FBF1F7"/><ellipse cx="22" cy="28" rx="4" ry="6" fill="#1A1222"/><ellipse cx="38" cy="28" rx="4" ry="6" fill="#1A1222"/><ellipse cx="30" cy="42" rx="5" ry="4" fill="#E77FA8"/></svg>
+  <div class="wrap">
+    <div class="eyebrow">Emotions &amp; Experiences · TP Colombia</div>
+    <h1>Desfile de <span>Disfraces</span> 🎃</h1>
+    <p class="lead">Viernes 30 de octubre · Gaming Arena · 30 turnos de 3 minutos desde las 3:00 p. m. · máximo 40 personas</p>
+    <div class="stats">
+      <div class="stat hl"><b id="sTurnos">0/30</b><span>turnos asignados</span></div>
+      <div class="stat"><b id="sPersonas">0/40</b><span>personas (máx. 40)</span></div>
+      <div class="stat"><b id="sSent">0</b><span>confirmadas</span></div>
+      <div class="stat"><b id="sFin">—</b><span>termina el desfile</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="tabs" role="tablist" aria-label="Pasos">
+    <button class="tab" role="tab" id="t-cargar" aria-controls="p-cargar" aria-selected="true"><span class="k">Paso 1 · 11:00 a. m.</span><span class="l">Cargar inscritos</span></button>
+    <button class="tab" role="tab" id="t-turnos" aria-controls="p-turnos" aria-selected="false"><span class="k">Paso 2 · antes de la 1:00 p. m.</span><span class="l">Turnos y mensajes</span></button>
+    <button class="tab" role="tab" id="t-vivo" aria-controls="p-vivo" aria-selected="false"><span class="k">Paso 3 · desde las 2:50 p. m.</span><span class="l">Desfile en vivo</span></button>
+    <button class="tab" role="tab" id="t-ajustes" aria-controls="p-ajustes" aria-selected="false"><span class="k">Extra</span><span class="l">Listas y ajustes</span></button>
+  </nav>
+
+  <!-- PASO 1 -->
+  <section class="panel" id="p-cargar" role="tabpanel" aria-labelledby="t-cargar">
+    <h2>Carga las respuestas del Forms </h2>
+    <p class="hint">Hazlo apenas se cierre la inscripción (11:00 a. m. o cuando se llenen los 30 turnos).</p>
+    <ol class="steps">
+      <li><span class="n">1</span><span>En el Forms entra a <b>Respuestas</b> y descarga las respuestas en <b>Excel</b>.</span></li>
+      <li><span class="n">2</span><span>Sube aquí ese archivo (o arrástralo al recuadro).</span></li>
+      <li><span class="n">3</span><span>¡Listo! La app arma los turnos sola. </span></li>
+    </ol>
+    <label class="drop" id="drop" for="file">
+      <input id="file" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt" hidden>
+      <svg class="dicon" viewBox="0 0 24 24" width="40" height="40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+      <span class="dtitle">Sube el Excel del Forms</span>
+      <span class="pmeta">Clic aquí para buscar el archivo, o arrástralo y suéltalo · .xlsx o .csv</span>
+    </label>
+    <details class="msg" style="margin-top:14px"><summary>¿No puedes descargar el archivo? Copia y pega la tabla</summary>
+      <p class="pmeta" style="margin:8px 0">Abre las respuestas en Excel, selecciona todo (Ctrl + A), copia (Ctrl + C) y pega aquí (Ctrl + V).</p>
+      <textarea id="paste" aria-label="Respuestas del Forms" placeholder="Pega aquí la tabla completa de Excel, con la fila de títulos"></textarea>
+      <div class="row" style="margin-top:10px"><button class="btn primary" id="btnLoad" type="button">Armar turnos</button></div>
+    </details>
+    <div class="row" style="margin-top:12px">
+      <button class="btn" id="btnAddToggle" type="button">+ Agregar a alguien a mano</button>
+      <button class="btn" id="btnReset1" type="button" style="color:var(--bad);border-color:var(--bad)">Empezar en 0</button>
+    </div>
+    <div id="err" class="notice err" hidden></div>
+    <div id="info" class="notice ok" hidden></div>
+    <form id="addForm" class="grid" style="margin-top:14px" hidden>
+      <label for="aName">Nombre completo<input id="aName" required></label>
+      <label for="aBms">BMS ID<input id="aBms"></label>
+      <label for="aPhone">Teléfono celular<input id="aPhone" inputmode="tel"></label>
+      <label for="aMail">Correo personal<input id="aMail" type="email"></label>
+      <label for="aMode">Participa<select id="aMode"><option>Individual</option><option>Grupal</option></select></label>
+      <label for="aGroup">Nombre del grupo<input id="aGroup" list="groupList"></label>
+      <div class="row" style="align-self:end"><button class="btn primary" type="submit">Agregar</button></div>
+    </form>
+    
+  </section>
+
+  <!-- PASO 2 -->
+  <section class="panel" id="p-turnos" role="tabpanel" aria-labelledby="t-turnos" hidden>
+    <h2>Turnos y mensajes </h2>
+    <p class="hint">Cada persona recibe su propio WhatsApp y correo con su turno y sus horas. Toca el botón verde o el amarillo y el mensaje se abre listo para enviar.</p>
+    <div id="grpHelp" class="notice sample" hidden>
+      <b>Hay personas que marcaron "Grupal".</b> El Forms no pregunta el nombre del grupo, así que escríbeselo a cada integrante (el mismo nombre para todos). La app los junta en un solo turno.
+    </div>
+    <div class="row" style="margin-top:12px"><button class="btn yellow big" type="button" data-xlsx="1">Descargar Excel organizado</button><span class="pmeta">Programación, participantes y planilla del jurado en un solo archivo.</span></div>
+    <div class="toolbar" style="margin-top:12px">
+      <input type="search" id="q" placeholder="Buscar por nombre, BMS o celular" aria-label="Buscar">
+      <button class="chipbtn" type="button" data-filter="todos" aria-pressed="true">Todos</button>
+      <button class="chipbtn" type="button" data-filter="pend" aria-pressed="false">Sin confirmar</button>
+      <button class="chipbtn" type="button" data-filter="ok" aria-pressed="false">Confirmados</button>
+      <button class="chipbtn" type="button" data-filter="grp" aria-pressed="false">Grupos</button>
+    </div>
+    <div id="sample" class="notice sample samplebar" hidden><span><b>Estás viendo 6 personas de ejemplo.</b> Cuando cargues las respuestas del Forms aparecen todos tus inscritos (hasta 30 turnos y 40 personas).</span><button class="btn yellow sm" type="button" id="goLoad">Cargar mis inscritos</button></div>
+    <div class="list" id="list" style="margin-top:12px"></div>
+    <div id="slotsWrap"></div>
+    <datalist id="groupList"></datalist>
+  </section>
+
+  <!-- PASO 3 -->
+  <section class="panel" id="p-vivo" role="tabpanel" aria-labelledby="t-vivo" hidden>
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <h2 style="margin:0">Desfile en vivo </h2>
+      <div class="clock" id="clock">--:--</div>
+    </div>
+    <p class="hint">Úsalo desde las 2:50 p. m. en la tarima, desde el celular. Marca quién llegó, controla los 3 minutos y pasa al siguiente turno.</p>
+    <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+    <div class="pmeta" id="progTxt" style="margin-bottom:14px">0 de 30 turnos</div>
+    <div class="live">
+      <div class="stage" id="stage"></div>
+      <div>
+        <div class="label" style="font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--pink);margin-bottom:8px">Siguen en la fila</div>
+        <div class="queue" id="queue"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXTRA -->
+  <section class="panel" id="p-ajustes" role="tabpanel" aria-labelledby="t-ajustes" hidden>
+    <h2>Listas y ajustes </h2>
+    <p class="hint">Copia las listas y pégalas en Excel, en un correo o en WhatsApp.</p>
+    <div class="row">
+      <button class="btn primary" type="button" data-xlsx="1">Descargar Excel organizado</button>
+      <button class="btn yellow" id="btnOps" type="button">Copiar listado para Operaciones</button>
+      <button class="btn yellow" id="btnHost" type="button">Copiar orden para el host</button>
+      <button class="btn yellow" id="btnGaming" type="button">Copiar orden para el Gaming</button>
+    </div>
+    <h2 style="font-size:19px;margin-top:24px">Horario</h2>
+    <p class="hint">Ya viene con el plan. Cámbialo solo si cambia el horario.</p>
+    <div class="grid">
+      <label for="cStart">Sube el turno 1<input id="cStart" type="time" value="15:00"></label>
+      <label for="cDur">Minutos por turno<input id="cDur" type="number" min="1" max="15" value="3"></label>
+      <label for="cBefore">Llegan (minutos antes)<input id="cBefore" type="number" min="0" max="60" value="10"></label>
+      <label for="cMax">Total de turnos<input id="cMax" type="number" min="1" max="100" value="30"></label>
+      <label for="cMaxP">Máximo de personas<input id="cMaxP" type="number" min="1" max="200" value="40"></label>
+      <label for="cPlace">Lugar<input id="cPlace" type="text" value="Gaming Arena"></label>
+      <label for="cMail">Abrir el correo en<select id="cMail"><option value="outlook">Outlook web</option><option value="gmail">Gmail</option><option value="mailto">App de correo del equipo</option></select></label>
+    </div>
+    <h2 style="font-size:19px;margin-top:24px">Empezar de cero</h2>
+    <p class="hint">Borra la lista y el avance del desfile de este navegador.</p>
+    <button class="btn" id="btnClear" type="button" style="color:var(--bad);border-color:var(--bad)">Empezar en 0 (borrar todo)</button>
+  </section>
+  <footer>Hecho para el equipo de Emotions &amp; Experiences · Los datos se quedan solo en este navegador.</footer>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const KEY='ee-desfile-disfraces-v4';
+const SAMPLE=[
+  {name:'Ejemplo · Laura Gómez',bms:'100001',phone:'3001234567',email:'laura.ejemplo@correo.com',mode:'Individual',group:'',stage:'La Catrina'},
+  {name:'Ejemplo · Andrés Ruiz',bms:'100002',phone:'3109876543',email:'andres.ejemplo@correo.com',mode:'Grupal',group:'Los Zombies'},
+  {name:'Ejemplo · Camila Torres',bms:'100003',phone:'3204567890',email:'camila.ejemplo@correo.com',mode:'Individual',group:'',stage:'Merlina'},
+  {name:'Ejemplo · Sofía Mora',bms:'100004',phone:'3157654321',email:'sofia.ejemplo@correo.com',mode:'Grupal',group:'Los Zombies'},
+  {name:'Ejemplo · Pedro Gil',bms:'100005',phone:'3012223344',email:'pedro.ejemplo@correo.com',mode:'Grupal',group:''},
+  {name:'Ejemplo · Valentina Ríos',bms:'100006',phone:'3186665544',email:'valen.ejemplo@correo.com',mode:'Individual',group:''},
+];
+let S={rows:[],sample:true,seq:1,live:{status:{},arrived:{},current:0,startedAt:null}};
+let filter='todos',query='';
+
+/* ---------- storage ---------- */
+function save(){try{localStorage.setItem(KEY,JSON.stringify({...S,cfg:cfg()}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(!d)return false;S={...S,...d};S.live={status:{},arrived:{},current:0,startedAt:null,...(d.live||{})};if(d.cfg)setCfg(d.cfg);return true}catch(e){return false}}
+function cfg(){return{start:$('cStart').value||'15:00',dur:Math.max(1,+$('cDur').value||3),before:Math.max(0,+$('cBefore').value||0),max:Math.max(1,+$('cMax').value||30),maxP:Math.max(1,+$('cMaxP').value||40),place:$('cPlace').value||'Gaming Arena',mail:$('cMail').value}}
+function setCfg(c){$('cStart').value=c.start||'15:00';$('cDur').value=c.dur||3;$('cBefore').value=c.before??10;$('cMax').value=c.max||30;$('cMaxP').value=c.maxP||40;$('cPlace').value=c.place||'Gaming Arena';$('cMail').value=c.mail||'outlook'}
+
+/* ---------- helpers ---------- */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+const toMin=s=>{const [h,m]=s.split(':').map(Number);return h*60+m};
+function fmt(m){m=Math.round(m);let h=Math.floor(m/60),mm=m%60;const ap=h>=12?'p. m.':'a. m.';const h12=h>12?h-12:(h===0?12:h);return h12+':'+String(mm).padStart(2,'0')+' '+ap}
+const cap=w=>w?w.charAt(0).toLocaleUpperCase('es')+w.slice(1).toLocaleLowerCase('es'):w;
+const firstName=n=>cap(n.replace(/^Ejemplo · /,'').trim().split(/\s+/)[0]||n);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2400)}
+function copy(text,msg){const done=()=>toast(msg||'Copiado');try{navigator.clipboard.writeText(text).then(done,()=>fb(text,done))}catch(e){fb(text,done)}}
+function fb(text,done){const t=document.createElement('textarea');t.value=text;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();try{document.execCommand('copy');done()}catch(e){toast('Selecciona el texto y cópialo')}t.remove()}
+
+/* ---------- parse Forms export ---------- */
+function parse(text){
+  text=text.replace(/\r/g,'');const first=text.split('\n')[0]||'';
+  const d=first.includes('\t')?'\t':(first.split(';').length>first.split(',').length?';':',');
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"'&&f==='')q=true;else if(c===d){row.push(f);f=''}else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}else f+=c}
+  if(f!==''||row.length){row.push(f);rows.push(row)}
+  return rows.filter(r=>r.some(x=>x.trim()!==''));
+}
+function guess(h){
+  const H=h.map(norm),used=new Set();
+  const pick=(...res)=>{for(const re of res){const i=H.findIndex((x,k)=>!used.has(k)&&re.test(x));if(i>=0){used.add(i);return i}}return -1};
+  const m={};
+  m.privacy=pick(/aviso de privacidad|proteccion de datos/);
+  m.email=pick(/correo electronico personal/,/correo personal/);
+  m.name=pick(/nombre completo/);
+  m.bms=pick(/bms/);
+  m.cedula=pick(/cedula/);
+  m.phone=pick(/telefono celular/,/celular|whats/);
+  m.mode=pick(/grupal o individual|individual o grupal|participaras/);
+  m.group=pick(/nombre del grupo|nombre de tu grupo|como se llama tu grupo|nombre de(l)? (tu )?combo/);
+  m.stage=pick(/con que nombre participas|nombre (con el )?que participas|nombre artistico|nombre de (tu )?personaje|personaje|nombre (en|para) (la )?tarima|nombre de (tu )?disfraz|como (quieres|te gustaria) que te (llamen|presentemos|presenten)|alias/);
+  m.ts=pick(/hora de finalizacion/,/hora de inicio/,/marca temporal/,/^id$/);
+  return m;
+}
+function tsVal(s){s=String(s||'').trim();if(/^\d+$/.test(s))return +s;
+  const m=s.match(/(\d{1,4})[\/-](\d{1,2})[\/-](\d{1,4})\D+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(a\.?\s*m\.?|p\.?\s*m\.?|am|pm)?/i);
+  if(!m){const t=Date.parse(s);return isNaN(t)?0:t}
+  let h=+m[4];const ap=(m[7]||'').toLowerCase();if(ap.startsWith('p')&&h<12)h+=12;if(ap.startsWith('a')&&h===12)h=0;
+  return h*3600+(+m[5])*60+(+(m[6]||0));}
+function ingest(text){ingestRows(parse(text))}
+function ingestRows(rows){
+  rows=rows.filter(r=>r.some(x=>String(x).trim()!==''));if(rows.length<2)return err('No encontré inscripciones. Copia la tabla completa de Excel, incluyendo la fila de títulos.');
+  const m=guess(rows[0]);
+  if(m.name<0)return err('No encontré la columna "Nombre Completo". Revisa que copiaste la fila de títulos.');
+  const get=(r,k)=>m[k]>=0?String(r[m[k]]??'').trim():'';
+  let rejected=0;
+  let list=rows.slice(1).map((r,i)=>{
+    if(m.privacy>=0&&/no acepto/i.test(get(r,'privacy'))){rejected++;return null}
+    const name=get(r,'name');if(!name)return null;
+    return{id:S.seq++,name,bms:get(r,'bms'),cedula:get(r,'cedula'),phone:get(r,'phone'),email:get(r,'email'),
+      ...(()=>{const gr=/grupal|grupo/i.test(get(r,'mode')),gv=get(r,'group'),sv=get(r,'stage');return gr?{mode:'Grupal',group:gv||sv,stage:''}:{mode:'Individual',group:'',stage:sv||(m.stage<0?gv:'')}})(),ts:tsVal(get(r,'ts')),i,wa:false,mail:false};
+  }).filter(Boolean);
+  if(m.ts>=0)list.sort((a,b)=>a.ts-b.ts||a.i-b.i);
+  S.rows=list;S.sample=false;S.live={status:{},arrived:{},current:0,startedAt:null};
+  $('err').hidden=true;
+  const g=list.filter(r=>r.mode==='Grupal').length;
+  $('info').innerHTML=`<b>${list.length} inscripciones cargadas</b> en orden de llegada.`+(rejected?` ${rejected} no aceptaron el aviso de privacidad y no se incluyeron.`:'')+(g?` ${g} marcaron "Grupal": escríbeles el nombre del grupo en el paso 2.`:'');
+  if(list.length>cfg().maxP)$('info').innerHTML+=` Hay ${list.length} personas y el máximo es ${cfg().maxP}.`;
+  $('info').hidden=false;save();renderAll();toast('Turnos armados');setTimeout(()=>$('t-turnos').click(),900);
+}
+function err(m){$('err').textContent=m;$('err').hidden=false}
+
+/* ---------- turns: individual = 1 turno, group = 1 turno ---------- */
+function compute(){
+  const c=cfg(),units=[],byKey={};
+  S.rows.forEach(r=>{
+    const key=r.mode==='Grupal'&&r.group.trim()?'g:'+norm(r.group):'p:'+r.id;
+    if(byKey[key]){byKey[key].members.push(r);return}
+    const u={key,grupal:r.mode==='Grupal',group:r.mode==='Grupal'?r.group.trim():'',members:[r]};byKey[key]=u;units.push(u);
+  });
+  const seen={};
+  units.forEach((u,i)=>{const n=i+1,up=toMin(c.start)+i*c.dur;
+    Object.assign(u,{n,over:n>c.max,upMin:up,arriveMin:up-c.before,up:fmt(up),arrive:fmt(up-c.before),down:fmt(up+c.dur)});
+    u.outs=u.members.filter(m=>m.out);u.members=u.members.filter(m=>!m.out);u.retired=!u.members.length;
+    u.members.forEach(p=>{const id=norm(p.cedula||p.bms);p._dup=!!(id&&seen[id]);if(id)seen[id]=1});
+  });
+  return units;
+}
+const realName=n=>tidy(n.replace(/^Ejemplo · /,''));
+const tidy=x=>{x=String(x||'').trim().replace(/\s+/g,' ');return x&&x===x.toLowerCase()?x.split(' ').map(cap).join(' '):x};
+const stageName=u=>tidy(u.grupal&&u.group?u.group:(u.members[0].stage||''));
+const unitName=u=>u.grupal&&u.group?'Grupo '+stageName(u):(u.members[0].stage?stageName(u)+' ('+realName(u.members[0].name)+')':realName(u.members[0].name));
+const callName=u=>stageName(u)||realName(u.members[0].name);
+
+/* ---------- messages ---------- */
+/* gender guess (editable per person) */
+const FEM_EX=['isabel','raquel','carmen','luz','pilar','mercedes','dolores','soledad','beatriz','ines','ruth','esther','rocio','belen','consuelo','maribel','mabel','nicole','michelle','dayane','karen','ingrid','astrid','miriam','lizeth','lisbeth','yeimy','jenny','nancy','sharon','evelyn','abigail','jasmin','yasmin','yazmin','zoe','ivonne','gaby','gabs','sol','noemi','nohemi','marisol','yuliet','yurani','leidy','lady','heidy','deisy','daisy','kelly','sandy','cindy','yuly','sury','lilian','liliam','vivian','jacqueline','yaneth','janeth','lucy','ivon','aracely','margarita','emily','kimberly','ashley','yeraldin','geraldine','madeleine','carol','paz','flor','fe','iris','eliana','dayana','jazmin','sofy','dany','juli','vale','cami','nati','mafe','caro','majo','pao','lu','dani'];
+const MAS_COMMON=['juan','carlos','luis','jorge','david','daniel','miguel','pedro','sebastian','nicolas','santiago','felipe','cristian','christian','kevin','brayan','bryan','steven','oscar','javier','manuel','julian','esteban','samuel','gabriel','ivan','ruben','victor','hector','cesar','edwin','wilson','wilmer','william','jair','yeison','jefferson','anderson','harold','alexander','michael','rafael','angel','adrian','raul','ismael','joel','emanuel','isaac','abel','jhonatan','jonathan','johnny','freddy','brandon','dylan','ian','max','axel','manuel','alan','martin','joan','omar','yesid','duvan','arley','elkin','jaime','wilder','hernan','german','fabian','efrain','alvaro','sneider','jeison','jhonny','frank','richard','robert','edgar','nelson','orlando','miller','robinson','yonatan','andrey','ferney','luis','felix','saul','josue','noel','daniel'];
+const MAS_EX=['luca','joshua','nicola','elias','jonas','matias','tomas','andres','lucas','jose','dario','borja','sasha','misha','garcia','jhoan','jhon','john','johan'];
+function guessGender(name){const f=norm(String(name).replace(/^Ejemplo · /,'')).split(/\s+/)[0]||'';
+  if(MAS_EX.includes(f))return 'm';if(FEM_EX.includes(f))return 'f';if(/^(maria|ana|luz|ma\.?)$/.test(f))return 'f';
+  if(MAS_COMMON.includes(f)||/o$/.test(f))return 'm';
+  if(/a$/.test(f))return 'f';return 'n'}
+function txtParts(p,u){const c=cfg(),g=!!(u.grupal&&u.group),gen=guessGender(p.name);const F=gen==='f';
+  return{c,g,F,name:firstName(p.name),limit:fmt(u.arriveMin+5),
+    N:gen==='n',insc:F?'inscrita':'inscrito',bienv:gen==='n'?'¡Te damos la bienvenida al show!':(F?'¡Bienvenida al show!':'¡Bienvenido al show!'),
+    tu:g?'su':'tu',te:g?'los':'te',sube:g?'Suben':'Subes',tiene:g?'Tienen':'Tienes',llega:g?'les pedimos llegar':'te pedimos llegar',
+    traer:g?'No olviden':'No olvides',prep:g?'¡Prepárense para brillar en la tarima!':'¡Prepárate para brillar en la tarima!',esp:g?'¡Los esperamos!':'¡Te esperamos!'}}
+function datos(t,u,wa){const B=s=>wa?`*${s}*`:s;
+  return `${B('Turno:')} ${u.n}\n${B('Fecha:')} hoy, viernes 30 de octubre\n${B('Lugar:')} ${t.c.place}\n${B('Hora de llegada:')} ${u.arrive}\n${B(t.sube+' a la tarima:')} ${u.up}\n${B('Tiempo en la tarima:')} ${t.c.dur} minutos (hasta las ${u.down})`}
+function tolerancia(t,wa){const B=s=>wa?`*${s}*`:s;
+  return `Para que todo salga perfecto, ${t.llega} 10 minutos antes. Contamos con una tolerancia de 5 minutos (${B('hasta las '+t.limit)}); después de ese tiempo daremos paso al siguiente turno para mantener el horario del desfile.`}
+function intro(t,u,wa){const B=s=>wa?`*${s}*`:`"${s}"`,st=stageName(u),CD=wa?'*Concurso de Disfraces*':'Concurso de Disfraces';
+  const conf=t.N?`tu inscripción en nuestro ${CD} quedó lista${wa?' 🎃':'.'}`:`quedaste ${t.insc} en nuestro ${CD}${wa?' 🎃':'.'}`;
+  const how=t.g?`Vas a participar en ${wa?'*grupo*':'grupo'} con el nombre ${B(st)}. ¡Suben juntos a la tarima!`
+    :(st?`Vas a participar de manera ${wa?'*individual*':'individual'} con el nombre ${B(st)}. Así te va a presentar el host.`:`Vas a participar de manera ${wa?'*individual*':'individual'}.`);
+  return `${conf} ${t.bienv}\n\n${how}`}
+function waText(p,u){const t=txtParts(p,u);
+  return `¡Hola, ${t.name}!\n\nEsperamos que estés muy bien. Somos del equipo de *Emotions & Experiences* y nos alegra confirmarte que ${intro(t,u,true)}`+
+  `\n\n*Datos de ${t.tu} participación*\n${datos(t,u,true)}\n\n${tolerancia(t,true)}\n\n`+
+  (t.g?`*No olviden:*\n• Sus disfraces listos\n• El permiso de sus líderes, si están en turno`:`*No olvides:*\n• Tu disfraz listo\n• El permiso de tu líder, si estás en turno`)+
+  `\n\nPor seguridad, no se permiten armas ni réplicas, fuego, humo, aerosoles ni líquidos.\n\n${t.prep} ${t.esp}\n\n_Equipo Emotions & Experiences · TP Colombia_`}
+const mailSubject=()=>'Confirmación de tu turno · Concurso de Disfraces · 30 de octubre';
+function mailBody(p,u){const t=txtParts(p,u);
+  return `Hola, ${t.name}:\n\nEsperamos que estés muy bien. Somos del equipo de Emotions & Experiences y nos alegra confirmarte que ${intro(t,u,false)}`+
+  `\n\nDatos de ${t.tu} participación:\n${datos(t,u,false)}\n\n${tolerancia(t,false)}\n\n`+
+  (t.g?`No olviden:\n• Sus disfraces listos\n• El permiso de sus líderes o supervisores, si están en turno`:`No olvides:\n• Tu disfraz listo\n• El permiso de tu líder o supervisor, si estás en turno`)+
+  `\n\nPor seguridad, no se permiten armas ni réplicas, fuego, humo, aerosoles ni líquidos.\n\n${t.prep} ${t.esp}\n\nCon cariño,\nEquipo Emotions & Experiences · TP Colombia`}
+function waNum(ph){let d=(ph||'').replace(/\D/g,'');if(d.length===10&&d[0]==='3')d='57'+d;return d}
+const waLink=(ph,text)=>{const d=waNum(ph);return d?`https://wa.me/${d}?text=${encodeURIComponent(text)}`:''};
+function mailLink(p,u){if(!p.email)return '';const c=cfg(),s=encodeURIComponent(mailSubject()),b=encodeURIComponent(mailBody(p,u)),to=encodeURIComponent(p.email);
+  if(c.mail==='gmail')return `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${s}&body=${b}`;
+  if(c.mail==='mailto')return `mailto:${p.email}?subject=${s}&body=${b}`;
+  return `https://outlook.office.com/mail/deeplink/compose?to=${to}&subject=${s}&body=${b}`}
+function remindText(p,u){const t=txtParts(p,u),st=stageName(u);
+  return `¡Hola, ${t.name}!\n\nEsperamos que estés muy bien. Te recordamos que *esta tarde* es nuestro *Concurso de Disfraces* 🎃 y ya casi es `+
+  (t.g?`el turno de *${st}*.`:(st?`tu turno como *${st}*.`:'tu turno.'))+`\n\n`+
+  `*Turno:* ${u.n}\n*Lugar:* ${t.c.place}\n*Hora de llegada:* ${u.arrive}\n*${t.sube} a la tarima:* ${u.up}\n\n`+
+  `${tolerancia(t,true)}\n\n${t.traer} ${t.g?'el permiso de sus líderes si están en turno':'el permiso de tu líder si estás en turno'}. ${t.esp}\n\n_Equipo Emotions & Experiences_`}
+function whereText(p,u){const t=txtParts(p,u);
+  return `¡Hola, ${t.name}! Somos del equipo de *Emotions & Experiences*.\n\nYa está todo listo en la *${t.c.place}* para ${t.g?`el turno de *${u.group}*`:'tu turno'} (turno ${u.n}).\n\n`+
+  `${t.g?'Su':'Tu'} hora de llegada era a las ${u.arrive} y ${t.g?'los':'te'} esperamos con gusto *hasta las ${t.limit}*; después de esa hora daremos paso al siguiente turno para mantener el horario del desfile.\n\n¿${t.g?'Ya vienen':'Ya vienes'} en camino?`}
+
+/* ---------- render: header ---------- */
+function renderStats(units){const c=cfg();const ok=units.filter(u=>!u.over&&!u.retired);
+  const act=S.rows.filter(r=>!r.out);$('sTurnos').textContent=units.filter(u=>!u.retired).length+'/'+c.max;
+  $('sPersonas').textContent=act.length+'/'+c.maxP;$('sPersonas').style.color=act.length>c.maxP?'var(--bad)':'';
+  $('sSent').textContent=act.filter(r=>r.wa||r.mail).length+'/'+act.length;
+  $('sFin').textContent=ok.length?ok[ok.length-1].down:'—';
+  $('groupList').innerHTML=[...new Set(S.rows.filter(r=>r.group).map(r=>r.group.trim()))].map(g=>`<option value="${esc(g)}">`).join('');
+}
+
+/* ---------- render: list ---------- */
+function renderSlots(units){const c=cfg(),W=$('slotsWrap');const used=Math.min(units.length,c.max);const free=c.max-used;
+  if(free<=0||filter!=='todos'||query){W.innerHTML=used>=c.max?'<div class="notice ok">¡Los '+c.max+' turnos están asignados!</div>':'';return}
+  let h='';for(let n=used+1;n<=c.max;n++){const up=toMin(c.start)+(n-1)*c.dur;h+=`<div class="slot"><b>Turno ${n}</b>Libre · sube ${fmt(up)}</div>`}
+  W.innerHTML=`<div class="sechead"><h3>Turnos libres</h3><span class="pmeta">${free} de ${c.max} sin asignar</span></div><div class="slots">${h}</div>`}
+function renderList(units){
+  renderSlots(units);
+  const c=cfg(),L=$('list');$('sample').hidden=!S.sample;
+  $('grpHelp').hidden=!S.rows.some(r=>r.mode==='Grupal'&&!r.group);
+  let us=units;const q=norm(query);
+  if(filter==='pend')us=us.filter(u=>u.members.some(p=>!p.wa&&!p.mail));
+  if(filter==='ok')us=us.filter(u=>!u.retired&&u.members.every(p=>p.wa||p.mail));
+  if(filter==='grp')us=us.filter(u=>u.grupal);
+  if(q)us=us.filter(u=>u.members.some(p=>norm(p.name+' '+p.bms+' '+p.phone+' '+u.group).includes(q)));
+  if(!units.length){L.innerHTML='<div class="empty">Aún no hay inscritos. Carga las respuestas del Forms en el paso 1. Abajo están los '+c.max+' turnos esperando.</div>';return}
+  if(!us.length){L.innerHTML='<div class="empty">No hay turnos con ese filtro.</div>';return}
+  L.innerHTML=us.map(u=>{
+    const outsHtml=u.outs.length?`<div class="pmeta" style="margin-top:8px">Se retiró: ${u.outs.map(o=>`${esc(realName(o.name))} <button class="btn sm" type="button" data-restore="${o.id}">Deshacer</button>`).join(' ')}</div>`:'';
+    if(u.retired)return `<article class="turn" style="border-style:dashed;opacity:.85"><div class="tn" style="filter:grayscale(1)"><div><small>TURNO</small>${u.n}</div></div><div style="min-width:0">
+      <div class="times"><span class="tchip">Sube <b>${u.up}</b></span></div><div class="pname">Turno libre</div>${outsHtml}
+      <div class="pmeta" style="margin-top:6px">Los demás conservan su hora. Si prefieres eliminarlo y correr los turnos, usa "Eliminar" (mejor antes de enviar mensajes, porque cambian las horas de los siguientes).</div>
+      <div class="acts">${u.outs.map(o=>`<button class="btn sm" type="button" data-hard="${o.id}" style="color:var(--bad);border-color:var(--bad)">Eliminar a ${esc(firstName(o.name))}</button>`).join('')}</div></div></article>`;
+    const people=u.members.map(p=>{const wa=waLink(p.phone,waText(p,u)),ml=mailLink(p,u);
+      return `<div class="person">
+        <div class="pname">${esc(realName(p.name))}</div>
+        <div class="pmeta">${p.bms?'BMS '+esc(p.bms)+' · ':''}${esc(p.phone||'Sin celular')} · ${esc(p.email||'Sin correo')}</div>
+        <div class="row" style="gap:6px;margin-top:4px">
+          ${p._dup?'<span class="badge bad">Inscripción repetida</span>':''}
+          ${p.wa?'<span class="badge ok">WhatsApp</span>':''}${p.mail?'<span class="badge ok">Correo</span>':''}${p.rem?'<span class="badge ok">Recordatorio</span>':''}
+        </div>
+        ${p.mode!=='Grupal'?`<div class="grp-in"><label for="s${p.id}" style="flex-direction:row;color:var(--muted)">Nombre en tarima</label><input id="s${p.id}" placeholder="Ej. La Catrina" value="${esc(p.stage||'')}" data-stage="${p.id}"></div>`:''}
+        ${p.mode==='Grupal'?`<div class="grp-in"><label for="g${p.id}" style="flex-direction:row;color:var(--muted)">Nombre del grupo</label><input id="g${p.id}" list="groupList" placeholder="Ej. Los Zombies" value="${esc(p.group)}" data-group="${p.id}"></div>`:''}
+        <div class="acts">
+          ${wa?`<a class="btn wa sm" href="${wa}" target="_blank" rel="noopener" data-sent="wa" data-id="${p.id}">WhatsApp</a>`:'<button class="btn sm" disabled>Sin celular</button>'}
+          ${ml?`<a class="btn yellow sm" href="${ml}" target="_blank" rel="noopener" data-sent="mail" data-id="${p.id}">Correo</a>`:'<button class="btn sm" disabled>Sin correo</button>'}
+          ${waNum(p.phone)?`<a class="btn sm" style="border-color:var(--pink);color:var(--pink)" href="${waLink(p.phone,remindText(p,u))}" target="_blank" rel="noopener" data-sent="rem" data-id="${p.id}" title="Para enviar hacia las 2:00 p. m., antes del desfile">Recordatorio antes del desfile</a>`:''}
+          <button class="btn sm" type="button" data-move="-1" data-id="${p.id}" aria-label="Subir en el orden">↑</button>
+          <button class="btn sm" type="button" data-move="1" data-id="${p.id}" aria-label="Bajar en el orden">↓</button>
+          <button class="btn sm" type="button" data-del="${p.id}" title="Si ya se enviaron mensajes, su turno queda libre y nadie cambia de hora">Se retiró</button>
+          <button class="btn sm" type="button" data-hard="${p.id}" style="color:var(--bad);border-color:var(--bad)">Eliminar</button>
+        </div>
+        <details class="msg"><summary>Ver mensaje y copiar</summary><pre>${esc(waText(p,u))}</pre>
+          <div class="acts"><button class="btn sm" type="button" data-copy="wa" data-id="${p.id}">Copiar WhatsApp</button><button class="btn sm" type="button" data-copy="mail" data-id="${p.id}">Copiar correo</button><button class="btn sm" type="button" data-copy="rem" data-id="${p.id}">Copiar recordatorio</button>
+          <button class="btn sm" type="button" data-toggle="wa" data-id="${p.id}">${p.wa?'Desmarcar':'Marcar'} WhatsApp enviado</button>
+          <button class="btn sm" type="button" data-toggle="mail" data-id="${p.id}">${p.mail?'Desmarcar':'Marcar'} correo enviado</button></div>
+        </details></div>`}).join('');
+    return `<article class="turn${u.over?' over':''}">
+      <div class="tn"><div><small>TURNO</small>${u.n}</div></div>
+      <div style="min-width:0">
+        <div class="times"><span class="tchip">Llega <b>${u.arrive}</b></span><span class="tchip up">Sube <b>${u.up}</b></span><span class="tchip">Baja <b>${u.down}</b></span></div>
+        <div class="row" style="gap:6px;margin-bottom:8px">
+          <span class="badge${u.grupal?' grp':''}">${u.grupal?(u.group?'Grupo '+esc(u.group)+' · '+u.members.length+(u.members.length===1?' persona':' personas'):'Grupal'):'Individual'}</span>
+          ${u.grupal&&!u.group?'<span class="badge warn">Escribe el nombre del grupo</span>':''}
+          ${u.over?'<span class="badge bad">Sin turno: pasa de '+c.max+'</span>':''}
+        </div>
+        ${people}${outsHtml}
+      </div></article>`}).join('');
+}
+
+/* ---------- render: live ---------- */
+function liveUnits(units){return units.filter(u=>!u.over&&!u.retired)}
+function renderLive(units){
+  const lu=liveUnits(units),c=cfg(),L=S.live;
+  const doneCount=lu.filter(u=>L.status[u.key]).length;
+  $('prog').style.width=(lu.length?doneCount/lu.length*100:0)+'%';
+  $('progTxt').textContent=`${doneCount} de ${lu.length} turnos ya pasaron`;
+  if(!lu.length){$('stage').innerHTML='<div class="label">Tarima</div><div class="who">Aún no hay turnos</div><div class="sub">Carga las inscripciones en el paso 1.</div>';$('queue').innerHTML='';return}
+  let idx=lu.findIndex(u=>!L.status[u.key]);
+  if(idx<0){$('stage').innerHTML=`<div class="label">Tarima</div><div class="who">¡Pasaron todos los turnos! </div><div class="sub">Ahora sigue la foto grupal, el jurado suma los puntajes y luego la premiación.</div><div class="row" style="margin-top:14px"><button class="btn" type="button" data-undo="1">Deshacer último</button></div>`;$('queue').innerHTML='';return}
+  const u=lu[idx];const arrived=!!L.arrived[u.key];const started=L.startedAt&&L.startedKey===u.key;
+  const now=new Date();const nowMin=now.getHours()*60+now.getMinutes()+now.getSeconds()/60;
+  const late=Math.round(nowMin-u.upMin);
+  const delayTxt=started?'':(late>0?`Van ${late} min tarde según el horario`:(late>-60?`A tiempo · sube a las ${u.up}`:''));
+  $('stage').innerHTML=`
+    <div class="label">${started?'En la tarima ahora':'Sigue a la tarima'} · Turno ${u.n}</div>
+    <div class="who">${esc(callName(u))}</div>
+    <div class="sub">${u.grupal&&u.group?'Grupo: '+esc(u.members.map(m=>realName(m.name)).join(', '))+' · ':(u.members[0].stage?esc(realName(u.members[0].name))+' · ':'')}Sube a las <b>${u.up}</b> · llega a las ${u.arrive}</div>
+    <div class="ring" id="ring"><svg viewBox="0 0 120 120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" id="ringFg" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg><div class="num" id="ringNum">${c.dur}:00</div></div>
+    <div class="delay ${late>0&&!started?'late':'ok'}" id="delay">${delayTxt}</div>
+    <div class="row" style="justify-content:center;margin-top:14px">
+      ${!arrived&&!started?`<button class="btn" type="button" data-arrive="${esc(u.key)}">Llegó</button>`:''}
+      ${!started?`<button class="btn primary big" type="button" data-start="${esc(u.key)}">▶ Subió a la tarima</button>`:`<button class="btn yellow big" type="button" data-next="${esc(u.key)}">Terminó · siguiente turno </button>`}
+      ${!started?`<button class="btn" type="button" data-skip="${esc(u.key)}">No llegó · pasar</button>`:''}
+      ${doneCount?'<button class="btn sm" type="button" data-undo="1">Deshacer último</button>':''}
+    </div>
+    ${!arrived&&!started?`<div class="acts" style="justify-content:center;margin-top:10px">${u.members.filter(p=>waNum(p.phone)).map(p=>`<a class="btn wa sm" target="_blank" rel="noopener" href="${waLink(p.phone,whereText(p,u))}">Escribir a ${esc(firstName(p.name))}</a>`).join('')}</div>`:''}`;
+  tick();
+  const pending=lu.slice(idx+1).filter(x=>!L.status[x.key]&&!L.arrived[x.key]&&nowMin>=x.arriveMin);
+  const alertHtml=pending.length?`<div class="alert"><h4>Ya debían llegar (${pending.length})</h4>${pending.map(x=>{const mins=Math.floor(nowMin-x.arriveMin);return `<div style="margin-top:8px"><b>Turno ${x.n} · ${esc(unitName(x))}</b> <span class="badge ${mins>=5?'bad':'warn'}">${mins>=5?'Pasaron '+mins+' min: puede perder el turno':'Tarde '+mins+' min'}</span><div class="acts">`+x.members.filter(p=>waNum(p.phone)).map(p=>`<a class="btn wa sm" target="_blank" rel="noopener" href="${waLink(p.phone,whereText(p,x))}">Escribir a ${esc(firstName(p.name))}</a>`).join('')+`<button class="btn sm" type="button" data-arrive="${esc(x.key)}">Llegó</button></div></div>`}).join('')}</div>`:'';
+  const pk=new Set(pending.map(x=>x.key));const next=lu.slice(idx+1).filter(x=>!L.status[x.key]&&!pk.has(x.key)).slice(0,5);
+  $('queue').innerHTML=alertHtml+(next.length?next.map(x=>{const a=!!L.arrived[x.key];const lateM=nowMin-x.arriveMin;return `<div class="qitem${a?' arrived':(lateM>=5?' lost':(lateM>=0?' late':''))}">
+    <div class="qhead"><b>Turno ${x.n}</b><span class="pmeta">sube ${x.up}</span></div>
+    <div style="font-weight:700">${esc(unitName(x))}</div>
+    <div class="pmeta">Debe llegar a las ${x.arrive}${!a&&lateM>=0?' · <b style="color:var(--pumpkin)">no ha llegado</b>':''}</div>
+    <div class="acts">${a?'<span class="badge ok">Llegó</span>':`<button class="btn sm" type="button" data-arrive="${esc(x.key)}">Llegó</button>`+x.members.filter(p=>waNum(p.phone)).map(p=>`<a class="btn wa sm" target="_blank" rel="noopener" href="${waLink(p.phone,whereText(p,x))}">WhatsApp ${esc(firstName(p.name))}</a>`).join('')}</div>
+  </div>`}).join(''):'<div class="pmeta">No hay más turnos en la fila.</div>');
+}
+function tick(){
+  const now=new Date();$('clock').textContent=fmt(now.getHours()*60+now.getMinutes()).replace(' ','\u00a0');
+  const ring=$('ring');if(!ring)return;const c=cfg(),total=c.dur*60;
+  if(S.live.startedAt){const el=Math.floor((Date.now()-S.live.startedAt)/1000);const left=total-el;
+    const shown=Math.abs(left);const t=(left<0?'+':'')+Math.floor(shown/60)+':'+String(shown%60).padStart(2,'0');
+    $('ringNum').textContent=t;$('ringFg').setAttribute('stroke-dashoffset',String(326.7*Math.min(1,Math.max(0,el/total))));
+    ring.classList.toggle('warn',left<=30&&left>0);ring.classList.toggle('done',left<=0);
+  }
+}
+
+/* ---------- Excel export ---------- */
+function exportXlsx(){
+  if(!window.XLSX||!XLSX.utils)return toast('No se pudo cargar el generador de Excel. Revisa el internet.');
+  const units=compute().filter(u=>!u.over&&!u.retired),c=cfg();
+  const NIGHT='3A2E3F',PINK='F8C8DC',PINKL='FDEEF4',YEL='FFE27A',LINE='E3C6D3';
+  const bd={top:{style:'thin',color:{rgb:LINE}},bottom:{style:'thin',color:{rgb:LINE}},left:{style:'thin',color:{rgb:LINE}},right:{style:'thin',color:{rgb:LINE}}};
+  const sTitle={font:{bold:true,sz:16,color:{rgb:NIGHT}},fill:{fgColor:{rgb:PINK}},alignment:{vertical:'center'}};
+  const sSub={font:{sz:11,color:{rgb:NIGHT}},fill:{fgColor:{rgb:YEL}},alignment:{vertical:'center'}};
+  const sHead={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:NIGHT}},alignment:{horizontal:'center',vertical:'center',wrapText:true},border:bd};
+  const sCell=(i,center,bold)=>({font:{bold:!!bold,color:{rgb:NIGHT}},fill:{fgColor:{rgb:i%2?PINKL:'FFFFFF'}},alignment:{horizontal:center?'center':'left',vertical:'center',wrapText:true},border:bd});
+  function sheet(title,sub,head,rows,widths,centerCols,boldCols,formulaCol){
+    const ws={};const n=head.length;const put=(r,cc,v,s)=>{const ref=XLSX.utils.encode_cell({r,c:cc});ws[ref]=typeof v==='object'&&v&&v.f?{t:'n',f:v.f,s}:{t:typeof v==='number'?'n':'s',v:v??'',s}};
+    for(let k=0;k<n;k++){put(0,k,k?'':title,sTitle);put(1,k,k?'':sub,sSub)}
+    head.forEach((h,k)=>put(3,k,h,sHead));
+    rows.forEach((row,i)=>row.forEach((v,k)=>put(4+i,k,v,sCell(i,centerCols.includes(k),boldCols.includes(k)))));
+    ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:3+Math.max(rows.length,1),c:n-1}});
+    ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:n-1}},{s:{r:1,c:0},e:{r:1,c:n-1}}];
+    ws['!cols']=widths.map(w=>({wch:w}));
+    ws['!rows']=[{hpt:30},{hpt:20},{hpt:6},{hpt:34}];
+    ws['!autofilter']={ref:XLSX.utils.encode_range({s:{r:3,c:0},e:{r:3+rows.length,c:n-1}})};
+    return ws;
+  }
+  const sub=`Viernes 30 de octubre · ${c.place} · ${c.dur} minutos por turno · llegada ${c.before} min antes · tolerancia 5 min`;
+  const prog=units.map(u=>[u.n,u.arrive,fmt(u.arriveMin+5),u.up,u.down,callName(u),u.members.map(m=>realName(m.name)).join(', '),u.grupal?'Grupal':'Individual',u.members.length,
+    u.members.map(m=>m.phone).filter(Boolean).join(' / '),u.members.map(m=>m.email).filter(Boolean).join(' / '),u.members.every(m=>m.wa||m.mail)?'Sí':'No','','']);
+  const people=units.flatMap(u=>u.members.map(m=>[u.n,u.up,realName(m.name),u.grupal?(u.group||''):(m.stage||''),m.bms,u.grupal?'Grupal':'Individual',u.group||'',m.phone,m.email,m.wa?'Sí':'No',m.mail?'Sí':'No',m.rem?'Sí':'No']));
+  const jur=units.map((u,i)=>[u.n,unitName(u),'','','',{f:`IF(COUNT(C${5+i}:E${5+i})=0,"",SUM(C${5+i}:E${5+i}))`},'']);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,sheet('Concurso de Disfraces · Programación de la tarima',sub,
+    ['Turno','Hora de llegada','Tolerancia hasta','Sube a la tarima','Baja de la tarima','Nombre en tarima','Nombre(s) completo(s)','Modalidad','N.º personas','Celular','Correo','Confirmado','¿Llegó?','Observaciones'],
+    prog,[7,13,13,13,13,26,34,12,10,26,34,11,9,24],[0,1,2,3,4,7,8,11,12],[0,3,5]),'Programación');
+  XLSX.utils.book_append_sheet(wb,sheet('Concurso de Disfraces · Participantes',sub,
+    ['Turno','Sube a la tarima','Nombre completo','Nombre en tarima','BMS ID','Modalidad','Grupo','Teléfono','Correo','WhatsApp enviado','Correo enviado','Recordatorio enviado'],
+    people,[7,13,30,22,12,12,20,14,34,11,11,12],[0,1,4,5,9,10,11],[0,2,3]),'Participantes');
+  XLSX.utils.book_append_sheet(wb,sheet('Concurso de Disfraces · Planilla del jurado',`Nota de 1 a 10 por criterio · máximo 30 · Jurado: ____________________`,
+    ['Turno','Participante / grupo','Creatividad y originalidad','Elaboración y detalle','Puesta en escena','Total /30','Puesto'],
+    jur,[7,32,16,16,16,11,10],[0,2,3,4,5,6],[0,1,5]),'Jurado');
+  try{XLSX.writeFile(wb,'Programacion_Desfile_Disfraces_2026.xlsx');toast('Excel descargado ')}catch(e){toast('No se pudo descargar aquí. Usa la versión de GitHub.')}
+}
+
+/* ---------- render all ---------- */
+function renderAll(){const units=compute();renderStats(units);renderList(units);renderLive(units)}
+
+/* ---------- events ---------- */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t?'true':'false'));
+  document.querySelectorAll('[role=tabpanel]').forEach(p=>p.hidden=p.id!==t.getAttribute('aria-controls'));
+  try{sessionStorage.setItem(KEY+'-tab',t.id)}catch(e){}
+  if(t.id==='t-vivo')renderAll();
+}));
+$('btnLoad').onclick=()=>ingest($('paste').value);
+$('goLoad').onclick=()=>$('t-cargar').click();
+function pad(n){return String(n).padStart(2,'0')}
+function cellStr(v){if(v instanceof Date)return `${v.getFullYear()}-${pad(v.getMonth()+1)}-${pad(v.getDate())} ${pad(v.getHours())}:${pad(v.getMinutes())}:${pad(v.getSeconds())}`;if(typeof v==='number'&&Number.isInteger(v))return v.toLocaleString('fullwide',{useGrouping:false});return String(v??'')}
+function readFile(f){if(!f)return;$('err').hidden=true;
+  if(/\.(xlsx|xls)$/i.test(f.name)){
+    if(!window.XLSX)return err('No se pudo cargar el lector de Excel (revisa el internet). Usa la opción de copiar y pegar la tabla.');
+    const r=new FileReader();r.onload=()=>{try{const wb=XLSX.read(new Uint8Array(r.result),{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:''}).map(row=>row.map(cellStr));ingestRows(rows);toastFile(f.name)}catch(e){err('No pude leer ese archivo. Revisa que sea el Excel de respuestas del Forms.')}};r.readAsArrayBuffer(f);
+  }else{const r=new FileReader();r.onload=()=>{ingest(r.result);toastFile(f.name)};r.readAsText(f)}}
+function toastFile(n){}
+$('file').onchange=e=>{readFile(e.target.files[0]);e.target.value=''};
+const dz=$('drop');['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over')}));
+['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over')}));
+dz.addEventListener('drop',e=>readFile(e.dataTransfer.files[0]));
+$('btnAddToggle').onclick=()=>{$('addForm').hidden=!$('addForm').hidden};
+$('addForm').onsubmit=e=>{e.preventDefault();if(S.sample){S.rows=[];S.sample=false}
+  S.rows.push({id:S.seq++,name:$('aName').value.trim(),bms:$('aBms').value.trim(),cedula:'',phone:$('aPhone').value.trim(),email:$('aMail').value.trim(),mode:$('aMode').value,group:$('aGroup').value.trim(),wa:false,mail:false});
+  e.target.reset();save();renderAll();toast('Agregado al final de la lista')};
+$('q').addEventListener('input',e=>{query=e.target.value;renderList(compute())});
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));renderList(compute())}));
+['cStart','cDur','cBefore','cMax','cMaxP','cPlace','cMail'].forEach(id=>$(id).addEventListener('input',()=>{save();renderAll()}));
+const byId=id=>S.rows.find(r=>r.id===+id);
+const unitOf=(units,id)=>units.find(u=>u.members.some(m=>m.id===+id));
+$('list').addEventListener('click',e=>{
+  const t=e.target.closest('[data-sent],[data-move],[data-del],[data-copy],[data-toggle],[data-gender],[data-restore],[data-hard]');if(!t)return;const d=t.dataset;
+  if(d.restore){byId(d.restore).out=false;save();renderAll();toast('Volvió a su turno');return}
+  if(d.hard){if(!t.dataset.c){t.dataset.c=1;t.textContent='¿Seguro? Toca otra vez';setTimeout(()=>{if(t.isConnected){delete t.dataset.c;t.textContent='Eliminar'}},3000);return}
+    const anySent=S.rows.some(r=>r.wa||r.mail||r.rem);S.rows=S.rows.filter(r=>r.id!==+d.hard);save();renderAll();toast(anySent?'Eliminado. Ojo: los turnos siguientes cambiaron de hora.':'Eliminado de la lista');return}
+  if(d.gender){byId(d.id).gender=d.gender;save();renderAll();toast(d.gender==='f'?'Le escribiremos como a ella ':'Le escribiremos como a él ');return}
+  if(d.sent){const r=byId(d.id);r[d.sent]=true;save();setTimeout(renderAll,120);return}
+  if(d.toggle){const r=byId(d.id);r[d.toggle]=!r[d.toggle];save();renderAll();return}
+  if(d.copy){const units=compute(),r=byId(d.id),u=unitOf(units,d.id);copy(d.copy==='wa'?waText(r,u):d.copy==='rem'?remindText(r,u):'Asunto: '+mailSubject()+'\n\n'+mailBody(r,u),d.copy==='wa'?'WhatsApp copiado':d.copy==='rem'?'Recordatorio copiado':'Correo copiado');return}
+  if(d.move){const i=S.rows.findIndex(r=>r.id===+d.id),j=i+(+d.move);if(j<0||j>=S.rows.length)return;[S.rows[i],S.rows[j]]=[S.rows[j],S.rows[i]];save();renderAll();return}
+  if(d.del){const anySent=S.rows.some(r=>r.wa||r.mail||r.rem);
+    if(!anySent){S.rows=S.rows.filter(r=>r.id!==+d.del);save();renderAll();toast('Quitado. Los turnos se reorganizaron.')}
+    else{byId(d.del).out=true;save();renderAll();toast('Retirado. Su turno queda libre y los demás conservan su hora.')}}
+});
+$('list').addEventListener('change',e=>{if(e.target.dataset.stage){byId(e.target.dataset.stage).stage=e.target.value.trim();save();renderAll();toast('Nombre en tarima guardado ');return}if(e.target.dataset.group){byId(e.target.dataset.group).group=e.target.value.trim();save();renderAll();toast('Grupo actualizado ')}});
+$('p-vivo').addEventListener('click',e=>{
+  const t=e.target.closest('[data-arrive],[data-start],[data-next],[data-skip],[data-undo]');if(!t)return;const d=t.dataset,L=S.live;
+  if(d.arrive){L.arrived[d.arrive]=Date.now();toast('Marcado: llegó ')}
+  if(d.start){L.startedAt=Date.now();L.startedKey=d.start;L.arrived[d.start]=L.arrived[d.start]||Date.now()}
+  if(d.next){L.status[d.next]='paso';L.order=(L.order||[]).concat(d.next);L.startedAt=null;L.startedKey=null;toast('¡Siguiente turno! ')}
+  if(d.skip){L.status[d.skip]='perdio';L.order=(L.order||[]).concat(d.skip);toast('Turno pasado: no llegó')}
+  if(d.undo){const k=(L.order||[]).pop();if(k){delete L.status[k];L.startedAt=null;L.startedKey=null}}
+  save();renderLive(compute());
+});
+$('btnOps').onclick=()=>{const units=compute().filter(u=>!u.over&&!u.retired);copy(['Turno\tNombre\tBMS ID\tModalidad\tGrupo\tCelular\tLlega\tSube a la tarima\tBaja',
+  ...units.flatMap(u=>u.members.map(p=>[u.n,p.name,p.bms,p.mode,u.group||'',p.phone,u.arrive,u.up,u.down].join('\t')))].join('\n'),'Listado para Operaciones copiado')};
+$('btnHost').onclick=()=>{const units=compute().filter(u=>!u.over&&!u.retired);copy(['Turno\tSube a la tarima\tLlamar como\tNombre(s) completo(s)',
+  ...units.map(u=>[u.n,u.up,callName(u),u.members.map(m=>realName(m.name)).join(', ')].join('\t'))].join('\n'),'Orden para el host copiado')};
+$('btnGaming').onclick=()=>{const units=compute().filter(u=>!u.over&&!u.retired);copy(['Turno\tSube a la tarima\tBaja\tParticipante / grupo',
+  ...units.map(u=>[u.n,u.up,u.down,unitName(u)].join('\t'))].join('\n'),'Orden para el Gaming copiado')};
+function resetAll(btn){const lbl=btn.dataset.lbl||(btn.dataset.lbl=btn.textContent);
+  if(!btn.dataset.c){btn.dataset.c=1;btn.textContent='¿Seguro? Se borra todo · toca otra vez';setTimeout(()=>{btn.textContent=lbl;delete btn.dataset.c},3500);return}
+  S.rows=[];S.sample=false;S.live={status:{},arrived:{},current:0,startedAt:null};$('paste').value='';$('info').hidden=true;$('err').hidden=true;
+  save();renderAll();btn.textContent=lbl;delete btn.dataset.c;toast('Listo: la app quedó en 0 ')}
+$('btnReset1').onclick=function(){resetAll(this)};
+$('btnClear').onclick=function(){resetAll(this)};
+
+document.addEventListener('click',e=>{if(e.target.closest('[data-xlsx]'))exportXlsx()});
+/* ---------- animated night background ---------- */
+(function(){const cv=$('bg'),ctx=cv.getContext('2d');if(!ctx)return;
+  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W=0,H=0,dpr=Math.min(2,window.devicePixelRatio||1),mx=0,my=0,tx=0,ty=0;
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  let stars=[],fog=[],bats=[];
+  function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);
+    stars=Array.from({length:Math.round(W*H/9000)},()=>({x:rnd(0,W),y:rnd(0,H*0.75),r:rnd(.4,1.5),p:rnd(0,6.28),s:rnd(.6,1.8)}));
+    fog=[['247,184,208',.10],['155,110,210',.12],['255,217,102',.05],['247,184,208',.08],['120,80,180',.10]].map(([c,a],i)=>({c,a,x:rnd(0,W),y:rnd(H*.3,H),r:rnd(.35,.6)*Math.max(W,H),sp:rnd(.00004,.0001),ph:rnd(0,6.28),i}));}
+  function bat(x,y,sz,flap){ctx.save();ctx.translate(x,y);ctx.scale(sz,sz*(0.7+0.3*Math.abs(Math.sin(flap))));ctx.beginPath();
+    ctx.moveTo(0,0);ctx.quadraticCurveTo(-6,-6,-16,-2);ctx.quadraticCurveTo(-12,0,-10,4);ctx.quadraticCurveTo(-6,1,-3,4);ctx.lineTo(0,2);
+    ctx.lineTo(3,4);ctx.quadraticCurveTo(6,1,10,4);ctx.quadraticCurveTo(12,0,16,-2);ctx.quadraticCurveTo(6,-6,0,0);ctx.fillStyle='rgba(10,6,16,.85)';ctx.fill();ctx.restore()}
+  function frame(t){
+    tx+=(mx-tx)*.04;ty+=(my-ty)*.04;ctx.clearRect(0,0,W,H);
+    for(const f of fog){const x=f.x+Math.sin(t*f.sp+f.ph)*W*.18+tx*(10+f.i*6),y=f.y+Math.cos(t*f.sp*1.3+f.ph)*H*.08+ty*(8+f.i*4);
+      const g=ctx.createRadialGradient(x,y,0,x,y,f.r);g.addColorStop(0,`rgba(${f.c},${f.a})`);g.addColorStop(1,`rgba(${f.c},0)`);ctx.fillStyle=g;ctx.fillRect(0,0,W,H)}
+    for(const st of stars){const a=.35+.45*Math.sin(t*.001*st.s+st.p);ctx.globalAlpha=Math.max(.08,a);ctx.fillStyle='#FFF4D6';ctx.beginPath();ctx.arc(st.x+tx*3,st.y+ty*3,st.r,0,6.28);ctx.fill()}
+    ctx.globalAlpha=1;
+    if(!reduce){if(bats.length<2&&Math.random()<.004){const dir=Math.random()<.5?1:-1;bats.push({x:dir>0?-40:W+40,y:rnd(H*.08,H*.45),v:dir*rnd(.8,1.6),sz:rnd(.8,1.5),ph:rnd(0,6)})}
+      bats=bats.filter(b=>{b.x+=b.v;b.y+=Math.sin((b.x+b.ph*50)/40)*.6;bat(b.x,b.y,b.sz,t*.02+b.ph);return b.x>-60&&b.x<W+60})}
+    if(!reduce)requestAnimationFrame(frame)}
+  addEventListener('resize',()=>{size();if(reduce)frame(0)});
+  addEventListener('pointermove',e=>{mx=(e.clientX/W-.5);my=(e.clientY/H-.5)},{passive:true});
+  size();if(reduce)frame(0);else requestAnimationFrame(frame);
+})();
+/* ---------- boot ---------- */
+try{localStorage.removeItem('ee-desfile-disfraces-v3')}catch(e){}
+if(!load()){S.rows=[];S.sample=false}
+if(S.sample){S.rows=[];S.sample=false}
+try{const tab=sessionStorage.getItem(KEY+'-tab');if(tab&&$(tab))$(tab).click()}catch(e){}
+renderAll();setInterval(tick,1000);setInterval(()=>{if(!$('p-vivo').hidden)renderLive(compute())},30000);
+})();
+</script>
+</body>
+</html>
