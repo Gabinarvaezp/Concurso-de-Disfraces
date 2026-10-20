@@ -174,7 +174,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding-block:28px}
   <div class="wrap">
     <div class="eyebrow">Emotions &amp; Experiences · TP Colombia</div>
     <h1>Desfile de <span>Disfraces</span> 🎃</h1>
-    <p class="lead">Viernes 30 de octubre · Gaming Arena · 30 turnos de 3 minutos desde las 3:00 p. m. · máximo 40 personas</p>
+    <p class="lead">Viernes 30 de octubre · Gaming Arena · 30 turnos de 2 minutos desde las 3:00 p. m. · máximo 40 personas</p>
     <div class="stats">
       <div class="stat hl"><b id="sTurnos">0/30</b><span>turnos asignados</span></div>
       <div class="stat"><b id="sPersonas">0/40</b><span>personas (máx. 40)</span></div>
@@ -256,7 +256,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding-block:28px}
       <h2 style="margin:0">Desfile en vivo </h2>
       <div class="clock" id="clock">--:--</div>
     </div>
-    <p class="hint">Úsalo desde las 2:50 p. m. en la tarima, desde el celular. Marca quién llegó, controla los 3 minutos y pasa al siguiente turno.</p>
+    <p class="hint">Úsalo desde las 2:50 p. m. en la tarima, desde el celular. Marca quién llegó, controla los 2 minutos y pasa al siguiente turno.</p>
     <div class="progress" aria-hidden="true"><i id="prog"></i></div>
     <div class="pmeta" id="progTxt" style="margin-bottom:14px">0 de 30 turnos</div>
     <div class="live">
@@ -281,7 +281,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding-block:28px}
     <p class="hint">Ya viene con el plan. Cámbialo solo si cambia el horario.</p>
     <div class="grid">
       <label for="cStart">Sube el turno 1<input id="cStart" type="time" value="15:00"></label>
-      <label for="cDur">Minutos por turno<input id="cDur" type="number" min="1" max="15" value="3"></label>
+      <label for="cDur">Minutos por turno<input id="cDur" type="number" min="1" max="15" value="2"></label>
       <label for="cBefore">Llegan (minutos antes)<input id="cBefore" type="number" min="0" max="60" value="10"></label>
       <label for="cMax">Total de turnos<input id="cMax" type="number" min="1" max="100" value="30"></label>
       <label for="cMaxP">Máximo de personas<input id="cMaxP" type="number" min="1" max="200" value="40"></label>
@@ -314,9 +314,9 @@ let filter='todos',query='';
 
 /* ---------- storage ---------- */
 function save(){try{localStorage.setItem(KEY,JSON.stringify({...S,cfg:cfg()}))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(!d)return false;S={...S,...d};S.live={status:{},arrived:{},current:0,startedAt:null,...(d.live||{})};if(d.cfg)setCfg(d.cfg);return true}catch(e){return false}}
-function cfg(){return{start:$('cStart').value||'15:00',dur:Math.max(1,+$('cDur').value||3),before:Math.max(0,+$('cBefore').value||0),max:Math.max(1,+$('cMax').value||30),maxP:Math.max(1,+$('cMaxP').value||40),place:$('cPlace').value||'Gaming Arena',mail:$('cMail').value}}
-function setCfg(c){$('cStart').value=c.start||'15:00';$('cDur').value=c.dur||3;$('cBefore').value=c.before??10;$('cMax').value=c.max||30;$('cMaxP').value=c.maxP||40;$('cPlace').value=c.place||'Gaming Arena';$('cMail').value=c.mail||'outlook'}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(!d)return false;S={...S,...d};S.live={status:{},arrived:{},current:0,startedAt:null,...(d.live||{})};if(d.cfg){if(+d.cfg.dur===3)d.cfg.dur=2;setCfg(d.cfg)}return true}catch(e){return false}}
+function cfg(){return{start:$('cStart').value||'15:00',dur:Math.max(1,+$('cDur').value||2),before:Math.max(0,+$('cBefore').value||0),max:Math.max(1,+$('cMax').value||30),maxP:Math.max(1,+$('cMaxP').value||40),place:$('cPlace').value||'Gaming Arena',mail:$('cMail').value}}
+function setCfg(c){$('cStart').value=c.start||'15:00';$('cDur').value=c.dur||2;$('cBefore').value=c.before??10;$('cMax').value=c.max||30;$('cMaxP').value=c.maxP||40;$('cPlace').value=c.place||'Gaming Arena';$('cMail').value=c.mail||'outlook'}
 
 /* ---------- helpers ---------- */
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
